@@ -13,8 +13,12 @@ WATCHLIST_DATEI = "watchlist.json"
 
 def lade_watchlist():
     if os.path.exists(WATCHLIST_DATEI):
-        with open(WATCHLIST_DATEI, "r") as f:
-            return json.load(f)
+        try:
+            with open(WATCHLIST_DATEI, "r") as f:
+                return json.load(f)
+        except json.JSONDecodeError:
+            os.remove(WATCHLIST_DATEI)
+            return ["AAPL", "MSFT"]
     return ["AAPL", "MSFT"]
 
 def speichere_watchlist(ticker_liste):
@@ -46,7 +50,8 @@ for symbol in watchlist:
         daten["EMA50"] = ta.trend.ema_indicator(daten["Close"], window=50)
         daten["SMA200"] = ta.trend.sma_indicator(daten["Close"], window=200)
         daten["RSI"] = ta.momentum.RSIIndicator(daten["Close"]).rsi()
-        daten["MACD"] = ta.trend.macd_diff(daten["Close"]).values.ravel()
+        macd_raw = ta.trend.macd_diff(daten["Close"])
+        daten["MACD"] = pd.Series(macd_raw).squeeze()
 
         # Signal-Logik
         def signal(zeile):
