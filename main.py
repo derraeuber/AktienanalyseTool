@@ -46,7 +46,7 @@ for symbol in watchlist:
         daten["EMA50"] = ta.trend.ema_indicator(daten["Close"], window=50)
         daten["SMA200"] = ta.trend.sma_indicator(daten["Close"], window=200)
         daten["RSI"] = ta.momentum.RSIIndicator(daten["Close"]).rsi()
-        daten["MACD"] = ta.trend.macd_diff(daten["Close"]).squeeze()
+        daten["MACD"] = ta.trend.macd_diff(daten["Close"]).values.ravel()
 
         # Signal-Logik
         def signal(zeile):
