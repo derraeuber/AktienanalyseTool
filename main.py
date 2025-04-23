@@ -17,12 +17,12 @@ if symbol:
             st.warning(f"Keine Daten für {symbol} gefunden.")
         else:
             # Indikatoren berechnen
-            daten["EMA20"] = ta.trend.ema_indicator(daten["Close"], window=20)
-            daten["EMA50"] = ta.trend.ema_indicator(daten["Close"], window=50)
-            daten["SMA200"] = ta.trend.sma_indicator(daten["Close"], window=200)
-            daten["RSI"] = ta.momentum.RSIIndicator(daten["Close"]).rsi()
-            macd_raw = ta.trend.macd_diff(daten["Close"])
-            daten["MACD"] = pd.Series(macd_raw).squeeze()
+            daten["EMA20"] = ta.trend.ema_indicator(daten["Close"], window=20).fillna(0)
+            daten["EMA50"] = ta.trend.ema_indicator(daten["Close"], window=50).fillna(0)
+            daten["SMA200"] = ta.trend.sma_indicator(daten["Close"], window=200).fillna(0)
+            daten["RSI"] = ta.momentum.RSIIndicator(daten["Close"]).rsi().fillna(0)
+            macd_raw = ta.trend.MACD(daten["Close"]).macd_diff()
+            daten["MACD"] = macd_raw.values.flatten()
 
             # Signal-Logik
             def signal(zeile):
@@ -55,4 +55,3 @@ if symbol:
 
     except Exception as e:
         st.error(f"Fehler bei der Analyse von {symbol}: {e}")
-
